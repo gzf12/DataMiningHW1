@@ -6,6 +6,8 @@ import pandas as pd
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import missingvalueoperation as mv
+
 from sklearn.linear_model import LogisticRegression
 
 fn_desc = util.project_dir + os.path.sep + 'data' + os.path.sep + 'desc.txt'
@@ -29,7 +31,40 @@ def preprocessing(attributes, categorys_map, fn_data):
     print(df.shape)
     # replace '?' by NaN
     df = df.replace(r'\?', np.nan, regex=True)
-    df.dropna(inplace=True)
+
+    # mv.preprocess_column(df, 'age')
+    # mv.preprocess_column(df, 'fnlwgt')
+    # mv.preprocess_column(df, 'education-num')
+    # mv.preprocess_column(df, 'capital-gain')
+    # mv.preprocess_column(df, 'capital-loss')
+    # mv.preprocess_column(df, 'hours-per-week')
+
+    continuous = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss', 'hours-per-week']
+
+    # for enumerate_column_name in ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race',
+    #                               'sex', 'native-country']:
+    #     mv.getNaNFromColumnWithAllowedValues(df[enumerate_column_name], categorys_map[enumerate_column_name],
+    #                                          enumerate_column_name)
+
+    attributes_copy = attributes[:]
+    attributes_copy.remove('native-country')
+    attributes_copy.remove('income')
+    attributes_copy.remove('workclass')
+    attributes_copy.remove('occupation')
+    mv.predict_value(df, 'native-country', attributes_copy, categorys_map)
+
+    attributes_copy = attributes[:]
+    attributes_copy.remove('income')
+    attributes_copy.remove('workclass')
+    attributes_copy.remove('occupation')
+    mv.predict_value(df, 'workclass', attributes_copy, categorys_map)
+
+    attributes_copy = attributes[:]
+    attributes_copy.remove('income')
+    attributes_copy.remove('occupation')
+    mv.predict_value(df, 'occupation', attributes_copy, categorys_map)
+
+    # df.dropna(inplace=True)
     print(df.shape)
     for column in df.columns:
         if df[column].dtype == 'object':
